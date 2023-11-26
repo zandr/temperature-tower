@@ -1,0 +1,38 @@
+{
+    "parameterSets": {
+        "tower-pla-standard": {
+            "TempBase": 220,
+            "TempIncrease": -5,
+            "Tiers": 9,
+            "SideText": "PLA"
+        },
+        "tower-pla-short": {
+            "TempBase": 220,
+            "TempIncrease": -10,
+            "Tiers": 5,
+            "SideText": "PLA"
+        },
+        "tower-pla-thermistor": {
+            "TempBase": 220,
+            "TempIncrease": -10,
+            "Tiers": 7,
+            "SideText": "PLA"
+        },
+
+        "tower-petg-standard": {
+            "TempBase": 250,
+            "TempIncrease": -5,
+            "Tiers": 9,
+            "SideText": "PETG"
+        },
+        "tower-petg-short": {
+            "TempBase": 250,
+            "TempIncrease": -10,
+            "Tiers": 5,
+            "SideText": "PETG"
+        },
+
+        "": {}
+},
+    "fileFormatVersion": "1"
+}
