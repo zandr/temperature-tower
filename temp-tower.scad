@@ -84,35 +84,52 @@ module EngraveText(text) {
         text(text, size=3.2, valign="center", font=Font);
 }
 
-module Custom(text) {
-    echo(str("CUSTOM##", text));
+// Ouptut special code to add to 3mf file
+module ZCodeWrite(text) {
+    echo(str(
+        "#",
+        "#CUSTOM",
+        "#3mf",
+        "#Metadata/Prusa_Slicer_custom_gcode_per_print_z.xml",
+        "#", text,
+        "##"
+    ));
 }
 
-difference() {
-    union() {
-        cube([25, 5, PlateHeight]); // Floor plate
-        for (tier = [0 : 1 : Tiers-1]) {
-            z = PlateHeight + (5 * tier);
-            temp = TempBase + (TempIncrease * tier);
-            Custom(str(
-                "<code print_z=\"", z, "\"",
-                    " type=\"4\"",
-                    " extruder=\"1\"", 
-                    " color=\"\"",
-                    " extra=\"M104 S", temp, "\"",
-                    " gcode=\"M104 S", temp, "\"/>",
-                ""
-            ));
-            translate([0, 0, z]) Tier(temp);
+module main() {
+    ZCodeWrite("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+    ZCodeWrite("<custom_gcodes_per_print_z>");
+    difference() {
+        union() {
+            cube([25, 5, PlateHeight]); // Floor plate
+            for (tier = [0 : 1 : Tiers-1]) {
+                z = PlateHeight + (5 * tier);
+                temp = TempBase + (TempIncrease * tier);
+                ZCodeWrite(str(
+                    "<code print_z=\"", z, "\"",
+                        " type=\"4\"",
+                        " extruder=\"1\"", 
+                        " color=\"\"",
+                        " extra=\"M104 S", temp, "\"",
+                        " gcode=\"M104 S", temp, "\"/>",
+                    ""
+                ));
+                translate([0, 0, z]) Tier(temp);
+            }
+        }
+        if (FullTower) {
+            translate([25 - EngraveDepth, 2.5, 1+PlateHeight])
+                rotate([90, -90, 90])
+                    EngraveText(SideText);
+        } else {
+            translate([4 + EngraveDepth, 2.5, 1+PlateHeight])
+                rotate([90, -90, -90])
+                    EngraveText(SideText);
         }
     }
-    if (FullTower) {
-        translate([25 - EngraveDepth, 2.5, 1+PlateHeight])
-            rotate([90, -90, 90])
-                EngraveText(SideText);
-    } else {
-        translate([4 + EngraveDepth, 2.5, 1+PlateHeight])
-            rotate([90, -90, -90])
-                EngraveText(SideText);
-    }
+    ZCodeWrite("<mode value=\"SingleExtruder\"/>");
+    ZCodeWrite("</custom_gcodes_per_print_z>");
 }
+
+main();
+

@@ -17,20 +17,19 @@ run () {
 # It does this by kludging together a PrusaSlicer-specific Metadata file.
 render () {
     basename=$1; shift
-    run openscad -o $basename "$@" temp-tower.scad 2>&1 | tee $basename.log
+    logfile=$basename.log
+    run openscad -o $basename "$@" temp-tower.scad 2>&1 | tee $logfile
 
+    rm -rf Metadata
     mkdir -p Metadata
-    custom=Metadata/Prusa_Slicer_custom_gcode_per_print_z.xml
-    (
-        echo '<?xml version="1.0" encoding="utf-8"?>'
-        echo '<custom_gcodes_per_print_z>'
-        sed -n 's/ECHO: "CUSTOM##\(.*\)"/\1/p' $basename.log
-        echo '<mode value="SingleExtruder"/>'
-        echo '</custom_gcodes_per_print_z>'
-    ) > $custom
+    cat $logfile | while IFS=# read _ _ custom type path text _; do
+        [ "$custom#$type" = "CUSTOM#3mf" ] || continue
+        echo $text >> $path
+    done
+
     run zip $basename $custom
     
-    rm $custom $basename.log
+    rm $custom $logfile
     rmdir Metadata
 }
 
