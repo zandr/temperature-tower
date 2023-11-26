@@ -1,3 +1,6 @@
+A Tiny Temperature Tower
+===================
+
 This is a tiny temperature tower.
 I made it because I suspected my printer's hotend thermistor was reporting too cold.
 
