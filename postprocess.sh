@@ -4,7 +4,7 @@
 
 set -e
 
-outfile=$(realpath $1)
+outfile=$(realpath)/$1
 infile=$(realpath $2)
 logfile=$(realpath $3)
 
